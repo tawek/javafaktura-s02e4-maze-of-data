@@ -2,21 +2,28 @@ package org.javafaktura.springdatademo;
 
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Persistent;
-import org.springframework.data.relational.core.mapping.MappedCollection;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKey;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.OneToMany;
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
-@Persistent
+@Entity
 @Data
 public class Post {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @CreatedDate
@@ -28,7 +35,12 @@ public class Post {
 
     String author;
 
-    @MappedCollection(keyColumn = "name")
+    @ElementCollection
+    @CollectionTable(
+            name = "post_property",
+            joinColumns = @JoinColumn(name = "post")
+    )
+    @MapKeyColumn(name = "name")
     Map<String, PostProperty> properties;
 
 }

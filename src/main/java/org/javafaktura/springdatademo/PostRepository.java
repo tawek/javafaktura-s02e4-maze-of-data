@@ -1,21 +1,21 @@
 package org.javafaktura.springdatademo;
 
-import org.springframework.data.jdbc.repository.query.Modifying;
-import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface PostRepository extends CrudRepository<Post, Long> {
 
-    @Query("select * from post where title = :title")
     List<Post> findByTitle(String title);
 
-    @Query("update post set author = :to where author = :from")
+    @Query("update Post p set p.author = :to where p.author = :from")
     @Modifying
+    @Transactional
     int changeAuthor(String from, String to);
 
-    @Query("select * from post where title like :title")
     List<Post> findByTitleLike(String title);
 
 

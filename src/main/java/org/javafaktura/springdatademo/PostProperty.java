@@ -1,15 +1,20 @@
 package org.javafaktura.springdatademo;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Persistent;
+import org.hibernate.annotations.Parent;
 
-@Persistent
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.MapKey;
+
+@Embeddable
 @Data
 public class PostProperty {
 
+    @Parent
     Long post;
 
+    @Column(insertable = false, updatable = false)
     String name;
 
     String value;
