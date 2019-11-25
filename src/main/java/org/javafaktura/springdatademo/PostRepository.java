@@ -1,5 +1,6 @@
 package org.javafaktura.springdatademo;
 
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -23,6 +24,8 @@ public interface PostRepository extends CrudRepository<Post, Long> {
     List<Post> findByTitleLike(String title);
 
     Page<Post> findByTitleLike(String title, Pageable pageable);
+
+    List<Post> findAll(Example<Post> example);
 
     @Async
     CompletableFuture<List<Post>> findByContentIgnoreCaseLike(String search);

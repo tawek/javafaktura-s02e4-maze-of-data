@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -158,6 +160,27 @@ class SpringDataDemoApplicationTests {
         List<Post> posts = postscf.get();
 
         assertThat(posts.size()).isEqualTo(100);
+
+    }
+
+
+    @Test
+    void testFindByTitleByExample() {
+
+        for (int i = 0; i <100; i++) {
+            Post post = newPost("Tytuł #" +i);
+            Post saved = postRepository.save(post);
+        }
+
+        Post probe = new Post();
+        probe.setTitle("Tytuł #1");
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnoreCase()
+                .withMatcher("title", $ -> $.startsWith());
+        Example<Post> example = Example.of(probe, matcher);
+        List<Post> posts = postRepository.findAll(example);
+
+        assertThat(posts.size()).isEqualTo(11);
 
     }
 
