@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -34,13 +36,5 @@ public class Post {
     String content;
 
     String author;
-
-    @ElementCollection
-    @CollectionTable(
-            name = "post_property",
-            joinColumns = @JoinColumn(name = "post")
-    )
-    @MapKeyColumn(name = "name")
-    Map<String, PostProperty> properties;
 
 }
