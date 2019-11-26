@@ -2,31 +2,19 @@ package org.javafaktura.springdatademo;
 
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Persistent;
+import org.springframework.data.cassandra.core.mapping.Indexed;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.MapKeyJoinColumn;
-import javax.persistence.OneToMany;
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
-@Entity
+@Persistent
 @Data
 public class Post {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    UUID id;
 
     @CreatedDate
     Instant date;

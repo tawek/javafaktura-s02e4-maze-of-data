@@ -4,16 +4,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
+import org.springframework.data.cassandra.core.query.CassandraPageRequest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.annotation.Rollback;
+import org.springframework.data.domain.Slice;
 
-import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
@@ -60,45 +60,41 @@ class SpringDataDemoApplicationTests {
     @Test
     void testFindByTitleLikePaging() {
 
-        for (int i = 0; i <100; i++) {
+        for (int i = 0; i <15; i++) {
             Post post = newPost("Tytuł #" +i);
             Post saved = postRepository.save(post);
         }
 
 
-        Page<Post> posts = postRepository.findByTitleLike("Tytuł #%", PageRequest.of(0, 10));
-
-        assertThat(posts.getPageable().getOffset()).isEqualTo(0);
-        assertThat(posts.getSize()).isEqualTo(10);
-        assertThat(posts.getTotalElements()).isEqualTo(100);
-        assertThat(posts.getTotalPages()).isEqualTo(10);
+        Slice<Post> posts = postRepository.findByTitleLike("Tytuł #%", CassandraPageRequest.of(0, 10));
+        System.out.println(posts.getContent());
+        assertThat(posts.getNumberOfElements()).isEqualTo(10);
 
         Pageable nextPage = posts.nextOrLastPageable();
-        Page<Post> posts2 = postRepository.findByTitleLike("Tytuł #%", nextPage);
-        assertThat(posts2.getPageable().getOffset()).isEqualTo(10);
-        assertThat(posts2.getSize()).isEqualTo(10);
-        assertThat(posts2.getTotalElements()).isEqualTo(100);
-        assertThat(posts2.getTotalPages()).isEqualTo(10);
+        Slice<Post> posts2 = postRepository.findByTitleLike("Tytuł #%", nextPage);
+        System.out.println(posts2.getContent());
+        assertThat(posts2.getNumberOfElements()).isEqualTo(6); // BUG (repeated first row from previous page)
+
 
     }
 
-    @Test
-    void testChangeAuthor() {
-
-        Post post = newPost("Tytuł3");
-
-        Post saved = postRepository.save(post);
-
-        int modified = postRepository.changeAuthor("Tomek", "Rychu");
-
-        assertThat(modified).isEqualTo(1);
-
-        Post loadedPost = postRepository.findById(saved.getId())
-                .orElseThrow(() -> notFound(saved.getId()));
-
-        assertThat(loadedPost.getAuthor()).isEqualTo("Rychu");
-
-    }
+//    @Test
+//    void testChangeAuthor() {
+//
+//        Post post = newPost("Tytuł3");
+//
+//        Post saved = postRepository.save(post);
+//
+//        int modified = postRepository.changeAuthor("Tomek", "Rychu");
+//
+//        assertThat(modified).isEqualTo(1);
+//
+//        Post loadedPost = postRepository.findById(saved.getId())
+//                .orElseThrow(() -> notFound(saved.getId()));
+//
+//        assertThat(loadedPost.getAuthor()).isEqualTo("Rychu");
+//
+//    }
 
 
     private Post newPost(String title) {

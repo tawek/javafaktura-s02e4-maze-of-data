@@ -2,14 +2,15 @@ package org.javafaktura.springdatademo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.cassandra.config.EnableCassandraAuditing;
 
 @SpringBootApplication
-@EnableJpaAuditing
+@EnableCassandraAuditing
 public class SpringDataDemoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringDataDemoApplication.class, args);
 	}
+
 
 }
